@@ -1,6 +1,7 @@
 import sqlite3
 import json
 
+
 def update_ship(id, ship_data):
     with sqlite3.connect("./shipping.db") as conn:
         db_cursor = conn.cursor()
@@ -13,12 +14,33 @@ def update_ship(id, ship_data):
                     hauler_id = ?
             WHERE id = ?
             """,
-            (ship_data['name'], ship_data['hauler_id'], id)
+            (ship_data["name"], ship_data["hauler_id"], id),
         )
 
         rows_affected = db_cursor.rowcount
 
     return True if rows_affected > 0 else False
+
+
+def create_ship(ship_data):
+    with sqlite3.connect("./shipping.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            INSERT INTO ship (name, hauler_id)
+            VALUES (?,?)
+            """,
+            (
+                ship_data["name"],
+                ship_data["hauler_id"],
+            ),
+        )
+
+        rows_affected = db_cursor.rowcount
+
+    return True if rows_affected > 0 else False
+
 
 def delete_ship(pk):
     with sqlite3.connect("./shipping.db") as conn:
@@ -26,9 +48,11 @@ def delete_ship(pk):
         db_cursor = conn.cursor()
 
         # Write the SQL query to get the information you want
-        db_cursor.execute("""
+        db_cursor.execute(
+            """
         DELETE FROM Ship WHERE id = ?
-        """, (pk,)
+        """,
+            (pk,),
         )
         number_of_rows_deleted = db_cursor.rowcount
 
@@ -42,17 +66,19 @@ def list_ships():
         db_cursor = conn.cursor()
 
         # Write the SQL query to get the information you want
-        db_cursor.execute("""
+        db_cursor.execute(
+            """
         SELECT
             s.id,
             s.name,
             s.hauler_id
         FROM Ship s
-        """)
+        """
+        )
         query_results = db_cursor.fetchall()
 
         # Initialize an empty list and then add each dictionary to it
-        ships=[]
+        ships = []
         for row in query_results:
             ships.append(dict(row))
 
@@ -61,6 +87,7 @@ def list_ships():
 
     return serialized_ships
 
+
 def retrieve_ship(pk):
     # Open a connection to the database
     with sqlite3.connect("./shipping.db") as conn:
@@ -68,14 +95,17 @@ def retrieve_ship(pk):
         db_cursor = conn.cursor()
 
         # Write the SQL query to get the information you want
-        db_cursor.execute("""
+        db_cursor.execute(
+            """
         SELECT
             s.id,
             s.name,
             s.hauler_id
         FROM Ship s
         WHERE s.id = ?
-        """, (pk,))
+        """,
+            (pk,),
+        )
         query_results = db_cursor.fetchone()
 
         # Serialize Python list to JSON encoded string
