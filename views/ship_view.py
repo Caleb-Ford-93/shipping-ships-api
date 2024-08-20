@@ -65,7 +65,7 @@ def list_ships(url):
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
         ships = []
-        if url["query_params"]:
+        if "hauler" in url["query_params"]["_expand"]:
             db_cursor.execute(
                 # Write the SQL query to get the information you want
                 """
@@ -125,7 +125,7 @@ def retrieve_ship(url):
         db_cursor = conn.cursor()
 
         # Write the SQL query to get the information you want
-        if url["query_params"]:
+        if "hauler" in url["query_params"]["_expand"]:
             db_cursor.execute(
                 """
             SELECT
